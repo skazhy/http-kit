@@ -17,11 +17,13 @@ public class MultipartEntity {
     private String name;
     private String filename;
     private Object content;
+    private String mimeType;
 
-    public MultipartEntity(String name, Object content, String filename) {
+    public MultipartEntity(String name, Object content, String filename, String mimeType) {
         this.name = name;
         this.filename = filename;
         this.content = content;
+        this.mimeType = mimeType;
     }
 
     public static String genBoundary(List<MultipartEntity> entities) {
@@ -40,8 +42,13 @@ public class MultipartEntity {
                 bytes.append("\"\r\n");
             }
             if (e.content instanceof File || e.content instanceof InputStream) {
-                // TODO configurable
-                bytes.append("Content-Type: application/octet-stream\r\n\r\n");
+                bytes.append("Content-Type: ");
+                if (e.mimeType != null) {
+                  bytes.append(e.mimeType);
+                } else {
+                  bytes.append("application/octet-stream");
+                }
+                bytes.append("\r\n\r\n");
             } else {
                 bytes.append("\r\n");
             }
